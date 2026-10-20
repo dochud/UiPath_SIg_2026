@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123A3D">
+<title>London, 21–22 October</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* Layout: teal header band, day tabs, single-column timeline of stops */
+  :root {
+    --paper: #F6F2E8;
+    --ink: #201D18;
+    --teal: #123A3D;
+    --teal-ink: #E8F1EF;
+    --brass: #A9793C;
+    --brass-ink: #241804;
+    --muted: #75705F;
+    --line: #DEDACB;
+    --card: #FFFFFF;
+    --link: #123A3D;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #16191A; --ink: #ECE7DA; --teal: #1D5457; --teal-ink: #EAF3F1;
+      --brass: #D6A860; --brass-ink: #241804; --muted: #A39D8C; --line: #2C302E;
+      --card: #1F2321; --link: #D6A860; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #16191A; --ink: #ECE7DA; --teal: #1D5457; --teal-ink: #EAF3F1;
+    --brass: #D6A860; --brass-ink: #241804; --muted: #A39D8C; --line: #2C302E;
+    --card: #1F2321; --link: #D6A860; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { color-scheme: light dark; }
+  body {
+    margin: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .gutter {
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding-block: 8px 60px; }
+
+  header.hero { background: var(--teal); color: var(--teal-ink); padding-block: 30px 26px; }
+  header.hero .inner { max-width: 640px; margin: 0 auto; }
+  .kicker { font-size: 0.8rem; color: var(--brass); letter-spacing: 0.02em; margin: 0 0 6px; }
+  h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 2rem; line-height: 1.1; margin: 0 0 8px; text-wrap: balance; }
+  .sub { margin: 0; color: var(--teal-ink); opacity: 0.8; font-size: 0.95rem; max-width: 46ch; }
+
+  .codes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .code {
+    font-size: 0.78rem; padding: 6px 10px; border-radius: 8px;
+    background: color-mix(in srgb, var(--teal-ink) 12%, transparent);
+    color: var(--teal-ink);
+  }
+  .code b { font-variant-numeric: tabular-nums; letter-spacing: 0.04em; user-select: all; }
+
+  nav.tabs { display: flex; gap: 6px; max-width: 640px; margin: 18px auto 0; }
+  nav.tabs label {
+    flex: 1; text-align: center; padding: 10px 4px; border-radius: 10px;
+    font-size: 0.85rem; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--line); background: var(--card); color: var(--muted); line-height: 1.25;
+  }
+  nav.tabs label .d { display: block; font-size: 0.72rem; font-weight: 500; opacity: 0.75; }
+  input[type="radio"] { position: absolute; opacity: 0; pointer-events: none; }
+  input[type="radio"]:focus-visible + * { outline: none; }
+  .panel { display: none; }
+  #d1:checked ~ .wrap .panel.p1,
+  #d2:checked ~ .wrap .panel.p2 { display: block; }
+  #d1:checked ~ nav.tabs label[for="d1"],
+  #d2:checked ~ nav.tabs label[for="d2"] { background: var(--brass); border-color: var(--brass); color: var(--brass-ink); }
+  #d1:focus-visible ~ nav.tabs label[for="d1"],
+  #d2:focus-visible ~ nav.tabs label[for="d2"] { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+  .daytitle { font-family: 'Fraunces', Georgia, serif; font-weight: 600; font-size: 1.35rem; margin: 26px 0 4px; }
+  .daynote { color: var(--muted); font-size: 0.9rem; margin: 0 0 20px; max-width: 48ch; line-height: 1.45; }
+
+  .stop { display: grid; grid-template-columns: 56px 1fr; gap: 14px; padding: 16px 0; border-top: 1px solid var(--line); }
+  .stop:first-of-type { border-top: none; }
+  .stop > div { min-width: 0; }
+  .time { font-weight: 600; font-size: 0.92rem; padding-top: 2px; color: var(--brass); font-variant-numeric: tabular-nums; }
+  .stop h3 { margin: 0 0 3px; font-size: 1.02rem; font-weight: 600; }
+  .stop p { margin: 0 0 8px; color: var(--muted); font-size: 0.88rem; line-height: 1.45; }
+  .stop p b { color: var(--ink); font-weight: 600; }
+  .maps { display: inline-block; font-size: 0.8rem; font-weight: 600; color: var(--link); text-decoration: none; border-bottom: 1px solid currentColor; }
+  .maps:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+
+  .flag { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--line); color: var(--muted); margin-bottom: 6px; }
+  .open { background: color-mix(in srgb, var(--brass) 18%, transparent); color: var(--brass); }
+
+  footer { max-width: 640px; margin: 10px auto 0; color: var(--muted); font-size: 0.82rem; line-height: 1.45; padding-block: 0 30px; }
+</style>
+</head>
+<body>
+<input type="radio" name="day" id="d1" checked>
+<input type="radio" name="day" id="d2">
+
+<header class="hero gutter">
+  <div class="inner">
+    <p class="kicker">London — team trip</p>
+    <h1>21–22 October</h1>
+    <p class="sub">Team day at St Paul's with Fairgame, a night at Travelodge London City, then 22 Bishopsgate on Thursday.</p>
+    <div class="codes">
+      <span class="code">Tickets <b>N48L5WTG</b></span>
+      <span class="code">Out: Coach B, seat <b>B61</b></span>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs gutter">
+  <label for="d1">Wed 21<span class="d">Travel + Fairgame</span></label>
+  <label for="d2">Thu 22<span class="d">22 Bishopsgate</span></label>
+</nav>
+
+<div class="wrap gutter">
+
+  <section class="panel p1">
+    <p class="daytitle">Train down, lunch, Fairgame</p>
+    <p class="daynote">Meet the team at Euston, drop bags in the City, lunch at St Paul's, games at 3:15. Evening is free.</p>
+
+    <div class="stop">
+      <div class="time">~08:15</div>
+      <div>
+        <span class="flag">drive</span>
+        <h3>Home → Stafford Station</h3>
+        <p>Around 35–40 min. Park in the station car park for two days — you're back on Thursday evening.</p>
+        <a class="maps" href="https://maps.apple.com/?daddr=Stafford%20Railway%20Station%2C%20Stafford%2C%20UK&dirflg=d">Directions in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~08:55</div>
+      <div>
+        <h3>Collect tickets</h3>
+        <p>Ticket machine at Stafford, collection code <b>N48L5WTG</b>. Pick up the return tickets at the same time.</p>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">09:14</div>
+      <div>
+        <span class="flag">booked</span>
+        <h3>Depart Stafford</h3>
+        <p>→ London Euston, arriving 10:35. Coach B, seat <b>B61</b>.</p>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">10:35</div>
+      <div>
+        <h3>Meet the team at Euston</h3>
+        <p>Pick a spot under the departures board so everyone finds each other.</p>
+        <a class="maps" href="https://maps.apple.com/?address=London%20Euston%20Station%2C%20London%2C%20UK">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~10:50</div>
+      <div>
+        <span class="flag">tube</span>
+        <h3>Euston Square → Liverpool Street</h3>
+        <p>Short walk across Euston Road to Euston Square, then Circle, Hammersmith &amp; City or Metropolitan line direct to Liverpool Street (~12 min). About 30 min door to door with bags.</p>
+        <a class="maps" href="https://maps.apple.com/?address=Euston%20Square%20Underground%20Station%2C%20London">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~11:20</div>
+      <div>
+        <span class="flag">bag drop</span>
+        <h3>Travelodge London City</h3>
+        <p>20 Middlesex Street, E1 — 5 min walk from Liverpool Street. Leave bags at reception; rooms usually from 15:00.</p>
+        <a class="maps" href="https://maps.apple.com/?q=Travelodge%20London%20City&address=20%20Middlesex%20Street%2C%20London">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~12:00</div>
+      <div>
+        <span class="flag">tube</span>
+        <h3>Liverpool Street → St Paul's</h3>
+        <p>Central line westbound, two stops (~15 min door to door). Or walk it in about 20 min.</p>
+        <a class="maps" href="https://maps.apple.com/?address=St%20Paul%27s%20Underground%20Station%2C%20London">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~12:15</div>
+      <div>
+        <h3>Lunch — Market Place St Paul's</h3>
+        <p>Food hall by the cathedral. Meet the final team member here. Plenty of vegetarian and milder options to suit everyone.</p>
+        <a class="maps" href="https://maps.apple.com/?q=Market%20Place%20St%20Paul%27s%2C%20London">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">14:35</div>
+      <div>
+        <span class="flag">walk</span>
+        <h3>Over to One New Change</h3>
+        <p>A few minutes on foot round the cathedral.</p>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">14:45</div>
+      <div>
+        <span class="flag">booked</span>
+        <h3>Fairgame City</h3>
+        <p>One New Change, EC4M. Arrive 14:45, games start <b>15:15</b>. Ticket in Apple Wallet.</p>
+        <a class="maps" href="https://maps.apple.com/?q=Fairgame%20City&address=One%20New%20Change%2C%20London%20EC4M%209AF">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">After</div>
+      <div>
+        <span class="flag">tube</span>
+        <h3>St Paul's → Liverpool Street</h3>
+        <p>Central line eastbound, two stops, then back to the hotel.</p>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">Eve</div>
+      <div>
+        <span class="flag open">free</span>
+        <h3>Check in, change, chill</h3>
+        <p>Nothing booked for the evening. Spitalfields Market and Brick Lane are a few minutes' walk from the hotel if the group wants to eat out.</p>
+        <a class="maps" href="https://maps.apple.com/?q=Old%20Spitalfields%20Market%2C%20London">Open in Maps</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel p2">
+    <p class="daytitle">22 Bishopsgate</p>
+    <p class="daynote">The hotel is a short walk from 22 Bishopsgate, so no early start needed.</p>
+
+    <div class="stop">
+      <div class="time">~09:30</div>
+      <div>
+        <h3>Check out</h3>
+        <p>Travelodge checkout is normally by 12:00, so check out before you head over and ask reception to hold your bag for the day.</p>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">09:45</div>
+      <div>
+        <span class="flag">walk</span>
+        <h3>Hotel → 22 Bishopsgate</h3>
+        <p>About 5–7 min via Liverpool Street and Bishopsgate.</p>
+        <a class="maps" href="https://maps.apple.com/?daddr=22%20Bishopsgate%2C%20London%20EC2N%204BQ&dirflg=w">Directions in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">10:00</div>
+      <div>
+        <span class="flag">booked</span>
+        <h3>22 Bishopsgate</h3>
+        <p>22 Bishopsgate, EC2N 4BQ. Pass in Apple Wallet. Keep photo ID handy for building security.</p>
+        <a class="maps" href="https://maps.apple.com/?address=22%20Bishopsgate%2C%20London%20EC2N%204BQ">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~17:20</div>
+      <div>
+        <h3>Collect bag from the hotel</h3>
+        <p>Back up Bishopsgate to Middlesex Street.</p>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~17:35</div>
+      <div>
+        <span class="flag">tube</span>
+        <h3>Liverpool Street → Euston Square</h3>
+        <p>Circle, Hammersmith &amp; City or Metropolitan line direct (~12 min), then a short walk to Euston. Aim to be there by about 18:10 — it's the evening rush.</p>
+        <a class="maps" href="https://maps.apple.com/?address=London%20Euston%20Station%2C%20London%2C%20UK">Open in Maps</a>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">18:33</div>
+      <div>
+        <span class="flag">booked</span>
+        <h3>Depart London Euston</h3>
+        <p>→ Stafford, arriving 19:49. Tickets collected Wednesday with <b>N48L5WTG</b>.</p>
+      </div>
+    </div>
+
+    <div class="stop">
+      <div class="time">~19:55</div>
+      <div>
+        <span class="flag">drive</span>
+        <h3>Stafford Station → Home</h3>
+        <p>Pay for parking if needed, then about 35–40 min home. Back around 20:35.</p>
+        <a class="maps" href="https://maps.apple.com/?daddr=Shifnal%2C%20Shropshire&dirflg=d">Directions in Maps</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer class="gutter">Fairgame finish time and Thursday's finish time aren't confirmed, so the afternoon timings are estimates.</footer>
+</body>
+</html>
