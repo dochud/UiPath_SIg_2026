@@ -95,6 +95,21 @@
   .maps { display: inline-block; font-size: 0.8rem; font-weight: 600; color: var(--link); text-decoration: none; border-bottom: 1px solid currentColor; }
   .maps:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
 
+  details.agenda-box summary { cursor: pointer; font-weight: 600; font-size: 0.95rem; padding: 4px 0; list-style: none; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  details.agenda-box summary::-webkit-details-marker { display: none; }
+  details.agenda-box summary::before { content: "\25B8"; color: var(--brass); display: inline-block; transition: transform 0.15s; }
+  details.agenda-box[open] summary::before { transform: rotate(90deg); }
+  details.agenda-box summary em { color: var(--muted); font-style: normal; font-weight: 500; font-size: 0.8rem; }
+  details.agenda-box summary:focus-visible { outline: 2px solid var(--brass); outline-offset: 2px; }
+  details.agenda-box ul.agenda { margin-top: 8px; }
+  @media (prefers-reduced-motion: reduce) { details.agenda-box summary::before { transition: none; } }
+  ul.agenda { list-style: none; margin: 0 0 10px; padding: 0; }
+  ul.agenda li { display: flex; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 0.85rem; line-height: 1.4; }
+  ul.agenda li:first-child { border-top: none; }
+  ul.agenda li > span:last-child { min-width: 0; }
+  ul.agenda li .t { flex: 0 0 48px; color: var(--brass); font-weight: 600; font-size: 0.82rem; font-variant-numeric: tabular-nums; }
+  ul.agenda li em { color: var(--muted); font-style: normal; }
+
   .flag { display: inline-block; font-size: 0.72rem; font-weight: 600; padding: 2px 8px; border-radius: 20px; background: var(--line); color: var(--muted); margin-bottom: 6px; }
   .open { background: color-mix(in srgb, var(--brass) 18%, transparent); color: var(--brass); }
 
@@ -113,6 +128,7 @@
     <div class="codes">
       <span class="code">Tickets <b>N48L5WTG</b></span>
       <span class="code">Out: Coach B, seat <b>B61</b></span>
+      <span class="code">Back: Coach A, seat <b>32</b></span>
     </div>
   </div>
 </header>
@@ -180,6 +196,7 @@
         <span class="flag">bag drop</span>
         <h3>Travelodge London City</h3>
         <p>20 Middlesex Street, E1 — 5 min walk from Liverpool Street. Leave bags at reception; rooms usually from 15:00.</p>
+        <p>Channel ref <b>E162AYBFE</b> · Supplier ref <b>242312332</b> · Click Travel <b>117623773</b></p>
         <a class="maps" href="https://maps.apple.com/?q=Travelodge%20London%20City&address=20%20Middlesex%20Street%2C%20London">Open in Maps</a>
       </div>
     </div>
@@ -243,14 +260,14 @@
   </section>
 
   <section class="panel p2">
-    <p class="daytitle">22 Bishopsgate</p>
-    <p class="daynote">The hotel is a short walk from 22 Bishopsgate, so no early start needed.</p>
+    <p class="daytitle">UiPath Public Sector SIG</p>
+    <p class="daynote">At 22 Bishopsgate, a short walk from the hotel, so no early start needed. Sessions run 10:00–15:30, then drinks.</p>
 
     <div class="stop">
       <div class="time">~09:30</div>
       <div>
         <h3>Check out</h3>
-        <p>Travelodge checkout is normally by 12:00, so check out before you head over and ask reception to hold your bag for the day.</p>
+        <p>Check out before you head over and take your bag with you. The venue has bag storage.</p>
       </div>
     </div>
 
@@ -268,17 +285,32 @@
       <div class="time">10:00</div>
       <div>
         <span class="flag">booked</span>
-        <h3>22 Bishopsgate</h3>
-        <p>22 Bishopsgate, EC2N 4BQ. Pass in Apple Wallet. Keep photo ID handy for building security.</p>
+        <h3>Public Sector SIG — 22 Bishopsgate</h3>
+        <p>22 Bishopsgate, EC2N 4BQ. Pass in Apple Wallet. Keep photo ID handy for building security. Registration and breakfast from 10:00. Drop your bag in the venue's storage.</p>
         <a class="maps" href="https://maps.apple.com/?address=22%20Bishopsgate%2C%20London%20EC2N%204BQ">Open in Maps</a>
       </div>
     </div>
 
     <div class="stop">
-      <div class="time">~17:20</div>
-      <div>
-        <h3>Collect bag from the hotel</h3>
-        <p>Back up Bishopsgate to Middlesex Street.</p>
+      <div style="grid-column: 1 / -1; min-width: 0;">
+        <details class="agenda-box">
+        <summary>Event agenda <em>10:00–15:30 · 12 items</em></summary>
+        <ul class="agenda">
+          <li><span class="t">10:00</span><span>Registration &amp; breakfast</span></li>
+          <li><span class="t">10:30</span><span>Welcome <em>— Matt Hogarth, RVP Public Sector, UiPath</em></span></li>
+          <li><span class="t">10:40</span><span>Navigating key trends in AI and automation <em>— Rufino Chiong, UiPath</em></span></li>
+          <li><span class="t">11:10</span><span>Bristol NHS FT: recruitment automation programme <em>— Will Calton (Bristol NHS FT) &amp; Jess Howe (NHS SBS)</em></span></li>
+          <li><span class="t">11:30</span><span>Break</span></li>
+          <li><span class="t">12:00</span><span>Automating 140,000+ supplier invoices at TBS <em>— Paul Wrench, Sopra Steria/TBS</em></span></li>
+          <li><span class="t">12:20</span><span>What's next for public sector transformation <em>— Radhika Rangaraju, Softcat</em></span></li>
+          <li><span class="t">12:40</span><span>Hackney Council: automation from pilot to scale <em>— Paul Golland (Hackney) &amp; Phil Lewis (EAS)</em></span></li>
+          <li><span class="t">13:00</span><span>Lunch</span></li>
+          <li><span class="t">14:15</span><span>Getting patients home: NHS discharge with UiPath Maestro Case <em>— Katie Mitchell, UiPath</em></span></li>
+          <li><span class="t">15:00</span><span>Q&amp;A / panel</span></li>
+          <li><span class="t">15:30</span><span>Wrap up &amp; drinks <em>— Level 2</em></span></li>
+        </ul>
+        <a class="maps" href="https://start.uipath.com/public-sector-SIG.html">Event page</a>
+        </details>
       </div>
     </div>
 
@@ -286,8 +318,8 @@
       <div class="time">~17:35</div>
       <div>
         <span class="flag">tube</span>
-        <h3>Liverpool Street → Euston Square</h3>
-        <p>Circle, Hammersmith &amp; City or Metropolitan line direct (~12 min), then a short walk to Euston. Aim to be there by about 18:10 — it's the evening rush.</p>
+        <h3>22 Bishopsgate → Euston</h3>
+        <p>Collect your bag from the venue's storage, walk 5 min to Liverpool Street, then Circle, Hammersmith &amp; City or Metropolitan line direct (~12 min), then a short walk to Euston. Aim to be there by about 18:10 — it's the evening rush.</p>
         <a class="maps" href="https://maps.apple.com/?address=London%20Euston%20Station%2C%20London%2C%20UK">Open in Maps</a>
       </div>
     </div>
@@ -297,7 +329,7 @@
       <div>
         <span class="flag">booked</span>
         <h3>Depart London Euston</h3>
-        <p>→ Stafford, arriving 19:49. Tickets collected Wednesday with <b>N48L5WTG</b>.</p>
+        <p>→ Stafford, arriving 19:49. Coach A, seat <b>32</b>. Tickets collected Wednesday with <b>N48L5WTG</b>.</p>
       </div>
     </div>
 
@@ -314,6 +346,6 @@
 
 </div>
 
-<footer class="gutter">Fairgame finish time and Thursday's finish time aren't confirmed, so the afternoon timings are estimates.</footer>
+<footer class="gutter">Fairgame's finish time isn't confirmed, so Wednesday afternoon timings are estimates.</footer>
 </body>
 </html>
